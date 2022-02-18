@@ -1,6 +1,14 @@
+import useSWR from 'swr'
 import Head from 'next/head'
+import fetcher from '../lib/fetcher';
 
 export default function Home() {
+  const  { data, error } = useSWR('/api/top-tracks', fetcher);
+
+  if (!data) {
+    return null;
+  }
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
       <Head>
@@ -15,6 +23,36 @@ export default function Home() {
             Next.js!
           </a>
         </h1>
+
+        <h1 className="text-6xl font-bold">TOP TEN TRACKS</h1>
+        <div>
+          {data.tracks.map((track:any, index:number) => (
+            <div
+              key={track.songUrl}
+              className="mt-8 flex w-full max-w-3xl flex-row items-baseline border-b border-gray-200"
+            >
+              <p className="text-sm font-bold text-gray-400">
+                {index + 1}
+              </p>
+              <div className="flex flex-col pl-3">
+                <a
+                  className="w-60 truncate font-medium text-gray-900 sm:w-96 md:w-full"
+                  href={track.songUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {track.title}
+                </a>
+                <p
+                  className="mb-4 w-60 truncate text-gray-500 sm:w-96 md:w-full"
+                  color="gray.500"
+                >
+                  {track.artist}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
 
         <p className="mt-3 text-2xl">
           Get started by editing{' '}
